@@ -80,7 +80,35 @@ $$
 
 **Proof.** Linearity of the integral yields R₀(q)+R₁(q)=1, since ν is a probability measure. Consequently max(R₀,R₁) ≥ 1/2. The constant randomized rule q=1/2 attains equality. The Lean result proves the lower bound for every integrable real-valued q, hence also for the admissible randomized rules. ∎
 
-## 7. Independent algebraic appendix: a geometry of words
+## 7. Radon–Nikodym theory: the entire posterior is unidentifiable
+
+Given a compatible full law μ with public marginal ν, define the joint
+subprobability η = O₍*₎(μ restricted to E). Since η ≤ ν, the Radon–Nikodym
+theorem supplies a measurable density q = dη/dν, satisfying 0 ≤ q ≤ 1
+almost everywhere. This is the conditional probability of the private event
+given the public observation.
+
+Conversely, for every measurable q: L → [0,1], define
+
+$
+\mu_q=(r_0)_*\big((1-q)\nu\big)+(r_1)_*\big(q\nu\big).
+$
+
+**Theorem 6 (posterior realization).** The public marginal of μ_q is ν,
+its total mass is one, and its hidden-event posterior agrees with q
+ν-almost everywhere.
+
+**Proof.** The two sections preserve the public trace. Additivity of
+pushforward and of measures with density yields
+O₍*₎μ_q = (1-q)ν + qν = ν. Restricting to E annihilates the first term and
+leaves the second, so its private joint marginal is qν. The Radon–Nikodym
+uniqueness theorem identifies its density with q almost everywhere. ∎
+
+Thus the ambiguity is not merely between two discrete alternatives:
+the complete measurable function of conditional probabilities is
+unidentified by the entire observed law.
+
+## 8. Independent algebraic appendix: a geometry of words
 
 The earlier polynomial construction is explicitly a *syntactic* representation. In a free rewrite system, encode the A and B labels by 1+X and X, and a chosen symbolic B-to-BB rewrite by squaring. This is not an encoding of actual activities. Evaluation at zero is conserved under the specified rewrites; it induces a functor to an ordered category and separates the A label from the BB label.
 
@@ -90,7 +118,7 @@ The Zariski loci V(X) and V(X²) coincide because their radicals agree, but X is
 
 This appendix is a mathematical study of the chosen word representation, not an argument that intimate activities are B-class publications.
 
-## 8. Formalization index
+## 9. Formalization index
 
 | Result | Lean declaration |
 |---|---|
@@ -100,6 +128,7 @@ This appendix is a mathematical study of the chosen word representation, not an 
 | Finite resource bound | Life.lean: certified_budget |
 | Strict sigma-algebra | [Statistics.lean](../Trashlean/Academic/Statistics.lean): public_sigma_strict |
 | Singular indistinguishable experiments | Statistics.lean: statistical_nonidentifiability |
+| Radon–Nikodym characterization and arbitrary posterior realization | Statistics.lean: posterior_characterization, arbitrary_posterior_realization |
 | Sharp randomized minimax risk | Statistics.lean: minimax_lower_bound, minimax_attained |
 | Word-rewriting category | [Degeneration.lean](../Trashlean/Academic/Degeneration.lean) |
 | Jet separation and strict completion | [Infinitesimal.lean](../Trashlean/Academic/Infinitesimal.lean) |

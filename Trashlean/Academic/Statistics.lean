@@ -12,6 +12,7 @@ can distinguish the two; randomized minimax error is exactly one half.
 namespace Trashlean.Academic.Life
 
 open MeasureTheory Set
+open scoped ENNReal
 noncomputable section
 
 local instance : MeasurableSpace History := ⊤
@@ -162,8 +163,7 @@ theorem minimax_attained (ν : Measure PublicLog) [IsProbabilityMeasure ν] :
     max (riskAbsent ν (fun _ => 1 / 2))
       (riskPresent ν (fun _ => 1 / 2)) = (1 : ℝ) / 2 := by
   unfold riskAbsent riskPresent
-  simp [integral_const]
-  norm_num
+  norm_num [integral_const]
 
 /-- Even access to the entire academic log cannot recover the private
 predicate. The proof does not depend on the choice of codomain or scores. -/
@@ -173,6 +173,92 @@ theorem no_public_decoder :
   have hp := (hf (privateSuffix [exampleEpisode])).mpr BB_exists
   rw [public_private] at hp
   exact neither.2 ((hf []).mp hp)
+
+/-! ## Radon–Nikodym characterization of the hidden posterior -/
+
+/-- The marginal of public observations jointly with a private event. -/
+def privateMarginal (μ : Measure History) : Measure PublicLog :=
+  (μ.restrict privateEventSet).map publicTrace
+
+theorem privateMarginal_le (μ : Measure History) :
+    privateMarginal μ ≤ μ.map publicTrace :=
+  Measure.map_mono Measure.restrict_le_self public_measurable
+
+/-- A posterior is the Radon–Nikodym derivative of the joint subprobability
+measure with respect to the public marginal. -/
+def hiddenPosterior (μ : Measure History) (ν : Measure PublicLog) :
+    PublicLog → ℝ≥0∞ :=
+  (privateMarginal μ).rnDeriv ν
+
+/-- Every compatible full law admits a posterior in [0,1] almost everywhere,
+and the posterior recovers the private-event submeasure. -/
+theorem posterior_characterization (μ : Measure History) (ν : Measure PublicLog)
+    [IsProbabilityMeasure ν] (h : μ.map publicTrace = ν) :
+    Measurable (hiddenPosterior μ ν) ∧
+      hiddenPosterior μ ν ≤ᵐ[ν] 1 ∧
+      ν.withDensity (hiddenPosterior μ ν) = privateMarginal μ := by
+  have hle : privateMarginal μ ≤ ν := h ▸ privateMarginal_le μ
+  letI : IsFiniteMeasure (privateMarginal μ) := isFiniteMeasure_of_le ν hle
+  exact ⟨Measure.measurable_rnDeriv _ _,
+    Measure.rnDeriv_le_one_of_le hle,
+    Measure.withDensity_rnDeriv_eq _ _ hle.absolutelyContinuous⟩
+
+/-- Every measurable conditional-probability profile can be realized by a
+mixture of the two observationally invisible sections. -/
+def mixedLaw (ν : Measure PublicLog) (q : PublicLog → ℝ≥0∞) :
+    Measure History :=
+  lawAbsent (ν.withDensity (fun l => 1 - q l)) +
+    lawPresent (ν.withDensity q)
+
+theorem mixed_public (ν : Measure PublicLog) (q : PublicLog → ℝ≥0∞)
+    (hq : Measurable q) (hb : ∀ l, q l ≤ 1) :
+    (mixedLaw ν q).map publicTrace = ν := by
+  rw [mixedLaw, Measure.map_add _ _ public_measurable,
+    absent_pushforward, present_pushforward,
+    ← withDensity_add_right (fun l => 1 - q l) hq]
+  have he : (fun l => 1 - q l) + q = 1 := by
+    funext l
+    exact tsub_add_cancel_of_le (hb l)
+  rw [he, withDensity_one]
+
+theorem mixed_privateMarginal (ν : Measure PublicLog) (q : PublicLog → ℝ≥0∞) :
+    privateMarginal (mixedLaw ν q) = ν.withDensity q := by
+  apply Measure.ext
+  intro s hs
+  rw [privateMarginal, Measure.map_apply public_measurable hs,
+    Measure.restrict_apply (public_measurable hs), mixedLaw,
+    Measure.add_apply MeasurableSpace.measurableSet_top,
+    lawAbsent, lawPresent,
+    Measure.map_apply absent_measurable MeasurableSpace.measurableSet_top,
+    Measure.map_apply present_measurable MeasurableSpace.measurableSet_top]
+  have ha : liftAbsent ⁻¹' (publicTrace ⁻¹' s ∩ privateEventSet) = ∅ := by
+    ext l
+    simp [privateEventSet, absent_not_private]
+  have hp : liftPresent ⁻¹' (publicTrace ⁻¹' s ∩ privateEventSet) = s := by
+    ext l
+    simp [privateEventSet, present_is_private]
+  rw [ha, hp, measure_empty, zero_add]
+
+/-- Full non-identification: the posterior can be any measurable profile
+in [0,1], despite the public probability distribution being fixed. -/
+theorem arbitrary_posterior_realization (ν : Measure PublicLog)
+    [IsProbabilityMeasure ν] (q : PublicLog → ℝ≥0∞)
+    (hq : Measurable q) (hb : ∀ l, q l ≤ 1) :
+    ∃ μ : Measure History, IsProbabilityMeasure μ ∧
+      μ.map publicTrace = ν ∧ hiddenPosterior μ ν =ᵐ[ν] q := by
+  have hm := mixed_public ν q hq hb
+  have hp : IsProbabilityMeasure (mixedLaw ν q) := by
+    constructor
+    have hu := congrArg (fun m : Measure PublicLog => m Set.univ) hm
+    rw [Measure.map_apply public_measurable MeasurableSet.univ,
+      preimage_univ, measure_univ] at hu
+    exact hu
+  refine ⟨mixedLaw ν q, hp, hm, ?_⟩
+  unfold hiddenPosterior
+  rw [mixed_privateMarginal]
+  exact Measure.rnDeriv_withDensity ν hq
+
+#print axioms arbitrary_posterior_realization
 
 #print axioms statistical_nonidentifiability
 #print axioms minimax_lower_bound
