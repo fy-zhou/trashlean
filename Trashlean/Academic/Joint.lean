@@ -15,9 +15,9 @@ open MeasureTheory Set
 open scoped BigOperators
 noncomputable section
 
-local instance : MeasurableSpace History := ⊤
-local instance : MeasurableSpace PublicLog := ⊤
-local instance : MeasurableSpace (PublicLog × Finset ℕ) := ⊤
+local instance jointHistoryMeasurableSpace : MeasurableSpace History := ⊤
+local instance jointPublicLogMeasurableSpace : MeasurableSpace PublicLog := ⊤
+local instance jointProductMeasurableSpace : MeasurableSpace (PublicLog × Finset ℕ) := ⊤
 
 private theorem code_measurable : Measurable jointCode :=
   fun _ _ => MeasurableSpace.measurableSet_top

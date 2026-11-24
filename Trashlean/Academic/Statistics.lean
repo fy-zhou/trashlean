@@ -15,8 +15,8 @@ open MeasureTheory Set
 open scoped ENNReal
 noncomputable section
 
-local instance : MeasurableSpace History := ⊤
-local instance : MeasurableSpace PublicLog := ⊤
+local instance statisticsHistoryMeasurableSpace : MeasurableSpace History := ⊤
+local instance statisticsPublicLogMeasurableSpace : MeasurableSpace PublicLog := ⊤
 
 def publicSigma : MeasurableSpace History :=
   MeasurableSpace.comap publicTrace (⊤ : MeasurableSpace PublicLog)
