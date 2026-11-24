@@ -134,3 +134,90 @@ This appendix is a mathematical study of the chosen word representation, not an 
 | Jet separation and strict completion | [Infinitesimal.lean](../Trashlean/Academic/Infinitesimal.lean) |
 
 The formal model is deliberately contrived. The statistical obstruction, quotient property and commutative-algebra claims are mathematical consequences of their stated hypotheses, not empirical or causal results about life.
+
+
+## 10. Finite-horizon scheduling and exact information capacity
+
+For a public log l, let T(l) be one more than its latest event time (or
+zero for the empty log). For each index i in {0,...,n-1}, define a valid
+private episode of unit duration starting at T(l)+i. Any subset S of
+these indices gives a history H(l,S) by appending the corresponding
+episodes in increasing order.
+
+**Theorem 7.** The construction has no overlap between distinct private
+intervals, every private event follows the public record, and the map
+S ↦ H(l,S) is injective. Its public trace is l. The number of histories is
+exactly 2^n, or choose(n,k) if the private time budget fixes |S|=k.
+
+**Proof.** Distinct indices give distinct start times; unit intervals
+cannot overlap. Recover the indices from the private trace. The counting
+formulas are the powerset and fixed-cardinality powerset identities.
+All public certificates are unchanged since the public trace is fixed. ∎
+
+**Theorem 8 (leakage capacity).** If a supplementary observation has m
+possible values and permits exact reconstruction of every one of the
+2^n schedules when the public trace is given, then m ≥ 2^n.
+
+**Proof.** On the fixed public fiber the supplementary observation must
+be injective: equal messages have equal decoded schedules. Compare
+cardinalities of the finite image and its codomain. ∎
+
+## 11. Faithful realization of arbitrary joint laws
+
+The map J:(l,S) ↦ H(l,S) is jointly injective, since the public projection
+recovers l and the private trace recovers S. Choose a left inverse D.
+For every probability law ρ on the product space, let μ=J_*ρ. Then
+
+$$
+\pi_*\mu=(\mathrm{pr}_1)_*\rho,\qquad D_*\mu=\rho.
+$$
+
+The second identity proves faithfulness of the measure embedding: no
+distinct joint laws collapse before observation. Every possible correlation
+between the academic and private schedules is realizable.
+
+For each fixed schedule S, push the same public law ν forward along
+l ↦ H(l,S). All such measures have public marginal ν. For distinct S and
+T they are mutually singular, witnessed by the measurable set of histories
+with exactly schedule T in this canonical construction.
+
+## 12. Exponential minimax theorem
+
+Let C be the finite set of compatible schedules and let q_S(l) be the
+probability assigned by a randomized decoder to S. Normalization says
+the sum over C is one at each public observation. Integrating against the
+common observed law gives sum_S success(S)=1. Hence for some S the success
+probability is no larger than 1/|C|. The constant uniform rule attains
+this value. In the n-slot model |C|=2^n, yielding worst-case success at most
+2^(-n), or error at least 1-2^(-n).
+
+## 13. Split exact sequence of observables
+
+Let U be the real vector space of functions on public logs and V the
+space of functions on full histories. Pullback P:U→V and restriction
+R:V→U along the public section are linear, and RP=id.
+
+**Theorem 9 (linear splitting).** There is a linear isomorphism
+
+$$
+V\cong U\oplus\ker R,
+\qquad f\mapsto(Rf,f-PRf).
+$$
+
+The inverse sends (g,k) to Pg+k. The identities follow from RP=id and
+Rk=0. Consequently PR is an idempotent projection, and every full observable
+has a unique public part and a residual part. An observable factors through
+the public trace iff its residual vanishes. The private-event indicator
+belongs to ker R and is nonzero, providing a genuine hidden direction.
+
+| Additional result | Lean |
+|---|---|
+| Feasible schedules and exponential fiber size | [Schedules.lean](../Trashlean/Academic/Schedules.lean) |
+| Exact supplementary information bound | Schedules.lean: leakage_capacity |
+| Faithful joint probability realization | [Joint.lean](../Trashlean/Academic/Joint.lean) |
+| Pairwise singular experiments and exponential minimax | Joint.lean: exponentially_many_singular_experiments, exponential_minimax |
+| Split exact linear algebra | [Observables.lean](../Trashlean/Academic/Observables.lean) |
+
+The unit-slot schedules are constructive witnesses, not a claim that real
+life is discrete or that real correlations vanish. The public-only model
+allows arbitrary correlations when the full joint law is chosen.
