@@ -18,3 +18,9 @@
 - Keep unrelated work separate. Never rewrite shared history; use a revert PR when needed.
 - Delete merged topic branches when appropriate, but retain main and dev.
 - See CONTRIBUTING.md for the release and verification checklist.
+
+- Preserve the stable document blobs when bootstrapping or synchronizing branches.
+- Verify the complete tree against the current base before updating a branch.
+- Treat */sample refs as examples only. Start real work from the latest dev
+  (or main for an urgent hotfix).
+- Use the Markdown compatibility and release checks in CONTRIBUTING.md.

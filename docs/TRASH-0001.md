@@ -37,7 +37,7 @@ The three predicates are the semantic interpretations of CCFA, CCFB and CCBB. Th
 
 ## 3. Observation as a universal quotient
 
-Define $h\sim k$ if and only if $\pi(h)=\pi(k)$. The public restoration map $r$ embeds public logs into histories and satisfies $\pi\circ r=\operatorname{id}_{\mathcal L}$. It follows that the induced map $\mathcal H/{\sim}\;\to\mathcal L$ is bijective.
+Define $h\sim k$ if and only if $\pi(h)=\pi(k)$. The public restoration map $r$ embeds public logs into histories and satisfies $\pi\circ r=\mathrm{id}_{\mathcal L}$. It follows that the induced map $\mathcal H/{\sim}\to\mathcal L$ is bijective.
 
 **Theorem 2 (universal observation).** For every set $Y$ and every map $F:\mathcal H\to Y$ constant on observation fibers, there exists exactly one $G:\mathcal L\to Y$ with $F=G\circ\pi$.
 
@@ -67,7 +67,7 @@ Let $\nu$ be any probability measure on $\mathcal L$. Define two sections of $\p
 - $r_0(\ell)=r(\ell)$;
 - $r_1(\ell)=r(\ell)$ followed by the fixed valid private episode.
 
-Both satisfy $\pi\circ r_i=\operatorname{id}_{\mathcal L}$. Form the pushforward measures $\mu_i=(r_i)_{\ast}\nu$ on $\mathcal H$.
+Both satisfy $\pi\circ r_i=\mathrm{id}_{\mathcal L}$. Form the pushforward measures $\mu_i=(r_i)_{\ast}\nu$ on $\mathcal H$.
 
 **Theorem 4 (universal statistical non-identifiability).** For every $\nu$, the measures $\mu_0$ and $\mu_1$ are probability measures, are mutually singular, and have identical public pushforwards. Moreover,
 
@@ -117,8 +117,10 @@ Since $\eta\leq\nu$, the Radon–Nikodym theorem supplies a measurable density
 
 $$
 q=\frac{d\eta}{d\nu},\qquad
-0\leq q\leq 1\quad \nu\text{-almost everywhere}.
+0\leq q\leq 1.
 $$
+
+The inequality holds almost everywhere with respect to $\nu$.
 
 This is the conditional probability of the private event given the public observation.
 
@@ -189,7 +191,7 @@ $$
 The map $J:(\ell,S)\mapsto H(\ell,S)$ is jointly injective, since the public projection recovers $\ell$ and the private trace recovers $S$. Choose a left inverse $D$. For every probability law $\rho$ on the product space, let $\mu=J_{\ast}\rho$. Then
 
 $$
-\pi_{\ast}\mu=(\operatorname{pr}_1)_{\ast}\rho,
+\pi_{\ast}\mu=(\mathrm{pr}_1)_{\ast}\rho,
 \qquad D_{\ast}\mu=\rho.
 $$
 
@@ -202,14 +204,14 @@ For each fixed schedule $S$, push the same public law $\nu$ forward along $\ell\
 Let $\mathcal C$ be the finite set of compatible schedules and let $q_S(\ell)$ be the probability assigned by a randomized decoder to $S$. Normalization says the sum over $\mathcal C$ is one at each public observation. Integrating against the common observed law gives
 
 $$
-\sum_{S\in\mathcal C}\operatorname{success}(S)=1.
+\sum_{S\in\mathcal C}\mathrm{success}(S)=1.
 $$
 
 Hence for some $S$ the success probability is no larger than $1/\lvert\mathcal C\rvert$. The constant uniform rule attains this value. In the $n$-slot model $\lvert\mathcal C\rvert=2^n$, yielding worst-case success at most $2^{-n}$, or error at least $1-2^{-n}$.
 
 ## 13. Split exact sequence of observables
 
-Let $U$ be the real vector space of functions on public logs and $V$ the space of functions on full histories. Pullback $P:U\to V$ and restriction $R:V\to U$ along the public section are linear, and $RP=\operatorname{id}_U$.
+Let $U$ be the real vector space of functions on public logs and $V$ the space of functions on full histories. Pullback $P:U\to V$ and restriction $R:V\to U$ along the public section are linear, and $RP=\mathrm{id}_U$.
 
 **Theorem 9 (linear splitting).** There is a linear isomorphism
 
@@ -218,7 +220,7 @@ V\cong U\oplus\ker R,
 \qquad f\mapsto(Rf,f-PRf).
 $$
 
-The inverse sends $(g,k)$ to $Pg+k$. The identities follow from $RP=\operatorname{id}_U$ and $Rk=0$. Consequently $PR$ is an idempotent projection, and every full observable has a unique public part and a residual part. An observable factors through the public trace if and only if its residual vanishes. The private-event indicator belongs to $\ker R$ and is nonzero, providing a genuine hidden direction.
+The inverse sends $(g,k)$ to $Pg+k$. The identities follow from $RP=\mathrm{id}_U$ and $Rk=0$. Consequently $PR$ is an idempotent projection, and every full observable has a unique public part and a residual part. An observable factors through the public trace if and only if its residual vanishes. The private-event indicator belongs to $\ker R$ and is nonzero, providing a genuine hidden direction.
 
 | Additional result | Lean |
 |---|---|
