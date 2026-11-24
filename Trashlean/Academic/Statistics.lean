@@ -252,8 +252,8 @@ theorem arbitrary_posterior_realization (ν : Measure PublicLog)
     have hu := congrArg (fun m : Measure PublicLog => m Set.univ) hm
     change ((mixedLaw ν q).map publicTrace) Set.univ = ν Set.univ at hu
     rw [Measure.map_apply public_measurable MeasurableSet.univ,
-      preimage_univ, measure_univ] at hu
-    exact hu
+      preimage_univ] at hu
+    exact hu.trans (measure_univ (μ := ν))
   refine ⟨mixedLaw ν q, hp, hm, ?_⟩
   unfold hiddenPosterior
   rw [mixed_privateMarginal]
