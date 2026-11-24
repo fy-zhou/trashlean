@@ -30,6 +30,8 @@ lake env lean Trashlean/Academic/Life.lean
 
 ## Contributing
 
+Use `dev` as the integration branch; `main` is reserved for verified stable releases. Start work on a topic branch from `dev`, open a pull request into `dev`, and promote `dev` to `main` only after the full CI suite passes. See [branching and release policy](CONTRIBUTING.md).
+
 Add a Lean module under `Trashlean/`, import it in `Trashlean.lean`, place a human-readable mathematical exposition in `docs/`, and update the index. Run `lake build` and inspect the axiom dependencies of the headline theorem.
 
 [CI / kernel peer review](https://github.com/fy-zhou/trashlean/actions)
