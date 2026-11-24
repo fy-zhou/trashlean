@@ -36,7 +36,8 @@ def slotEpisode (l : PublicLog) (i : ℕ) : Episode :=
 
 theorem slot_valid (l : PublicLog) (i : ℕ) :
     validEpisode (slotEpisode l i) := by
-  unfold validEpisode slotEpisode
+  change 0 < (1 : ℕ) ∧ 2 ≤ ({0, 1} : Finset ℕ).card ∧
+    ({0, 1} : Finset ℕ) = {0, 1}
   decide
 
 theorem slot_injective (l : PublicLog) : Function.Injective (slotEpisode l) := by
@@ -112,9 +113,9 @@ theorem schedule_BB_iff (l : PublicLog) (s : Finset ℕ) :
   constructor
   · rintro ⟨e, he, _⟩
     obtain ⟨i, hi, _⟩ := List.mem_map.mp he
-    exact ⟨i, Finset.mem_sort.mp hi⟩
+    exact ⟨i, by simpa using hi⟩
   · rintro ⟨i, hi⟩
-    exact ⟨slotEpisode l i, List.mem_map.mpr ⟨i, Finset.mem_sort.mpr hi, rfl⟩,
+    exact ⟨slotEpisode l i, List.mem_map.mpr ⟨i, by simpa using hi, rfl⟩,
       slot_valid l i⟩
 
 theorem all_schedules_same_certification (l : PublicLog) (s t : Finset ℕ)

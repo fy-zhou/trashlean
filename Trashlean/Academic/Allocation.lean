@@ -74,8 +74,7 @@ theorem infeasible_iff_bottleneck (env : Environment) (tasks : ι → Commitment
     ¬ Feasible env tasks ↔
       ∃ S : Finset ι, (neighbourhood env tasks S).card < S.card := by
   rw [hall_feasibility]
-  push_neg
-  rfl
+  push_neg <;> rfl
 
 theorem allocation_time_budget (env : Environment) (tasks : ι → Commitment)
     (h : Feasible env tasks) : Fintype.card ι ≤ env.horizon := by
