@@ -71,6 +71,7 @@ structure Episode where
   start : ℕ
   duration : ℕ
   participants : Finset ℕ
+  consenting : Finset ℕ
   deriving DecidableEq
 
 inductive Event where
@@ -87,6 +88,18 @@ def publicTrace : History → PublicLog
   | [] => []
   | .academic v e :: rest => (v, e) :: publicTrace rest
   | .episode _ :: rest => publicTrace rest
+
+/-- The lexical joke is an operation on labels, not on people or events. -/
+def lexicalRewrite (word : List Char) : List Char :=
+  word.map (fun c => if c = 'F' then 'B' else c)
+
+theorem lexical_derivation :
+    lexicalRewrite "CCFB".toList = "CCBB".toList := by decide
+
+def privateTrace : History → List Episode
+  | [] => []
+  | .academic _ _ :: rest => privateTrace rest
+  | .episode e :: rest => e :: privateTrace rest
 
 def restorePublic (log : PublicLog) : History :=
   log.map fun p => Event.academic p.1 p.2
@@ -109,13 +122,37 @@ def privateSuffix (sessions : List Episode) : History :=
   | nil => rfl
   | cons p log ih =>
       rcases p with ⟨v, e⟩
-      simp [restorePublic, publicTrace, ih]
+      change (v, e) :: publicTrace (restorePublic log) = (v, e) :: log
+      rw [ih]
 
 @[simp] theorem public_private (sessions : List Episode) :
     publicTrace (privateSuffix sessions) = [] := by
   induction sessions with
   | nil => rfl
   | cons e es ih => simpa [privateSuffix, publicTrace] using ih
+
+@[simp] theorem private_append (h k : History) :
+    privateTrace (h ++ k) = privateTrace h ++ privateTrace k := by
+  induction h with
+  | nil => rfl
+  | cons e h ih => cases e <;> simp [privateTrace, ih]
+
+@[simp] theorem private_restore (log : PublicLog) :
+    privateTrace (restorePublic log) = [] := by
+  induction log with
+  | nil => rfl
+  | cons p log ih =>
+      rcases p with ⟨v, e⟩
+      change privateTrace (restorePublic log) = []
+      exact ih
+
+@[simp] theorem private_private (sessions : List Episode) :
+    privateTrace (privateSuffix sessions) = sessions := by
+  induction sessions with
+  | nil => rfl
+  | cons e es ih =>
+      change e :: privateTrace (privateSuffix es) = e :: es
+      rw [ih]
 
 /-- A certificate requires a causally ordered submission, independently
 identified referees, evidence and effort, sufficient scores, and a decision.
@@ -155,19 +192,27 @@ def Certified (h : History) (v : Venue) (p : ℕ) : Prop :=
 def CCFA (h : History) : Prop := ∃ p, Certified h .A p
 def CCFB (h : History) : Prop := ∃ p, Certified h .B p
 
-def validSchedule (log : List AcademicEvent) (sessions : List Episode) : Prop :=
-  sessions ≠ [] ∧
-  (∀ e ∈ sessions, 0 < e.duration ∧ 2 ≤ e.participants.card ∧
-    ∀ a ∈ log, academicTime a ≤ e.start) ∧
-  sessions.Pairwise (fun e f => e.start + e.duration ≤ f.start)
+/-- An episode is an abstract record of consensual adult intimate activity.
+Participant identifiers range over an assumed adult population.
+No publication or academic category enters its validity conditions. -/
+def validEpisode (e : Episode) : Prop :=
+  0 < e.duration ∧ 2 ≤ e.participants.card ∧ e.consenting = e.participants
 
-/-- The B-origin process consists of an actual certified B log followed by
-a nonempty, temporally feasible private schedule. It is not a claim that
-real-world B publications cause private activity. -/
 def CCBB (h : History) : Prop :=
-  ∃ (log : List AcademicEvent) (sessions : List Episode),
-    CCFB (embed .B log) ∧ validSchedule log sessions ∧
-    h = embed .B log ++ privateSuffix sessions
+  ∃ e ∈ privateTrace h, validEpisode e
+
+theorem no_private_in_public (log : PublicLog) :
+    ¬ CCBB (restorePublic log) := by
+  simp [CCBB]
+
+theorem no_certificate_in_empty_public {h : History}
+    (he : publicTrace h = []) (v : Venue) (p : ℕ) :
+    ¬ Certified h v p := by
+  rintro ⟨c⟩
+  have hm := c.submitted
+  change (v, AcademicEvent.submission c.submission) ∈ publicTrace h at hm
+  rw [he] at hm
+  simp at hm
 
 theorem certification_observational {h k : History}
     (eq : publicTrace h = publicTrace k) (v : Venue) (p : ℕ) :
@@ -181,29 +226,15 @@ theorem private_noninterference (h : History) (sessions : List Episode)
   apply certification_observational
   simp
 
-theorem no_A_in_B_workflow (log : List AcademicEvent) :
-    ¬ CCFA (embed .B log) := by
-  rintro ⟨p, ⟨c⟩⟩
-  have hm := c.submitted
-  change (Venue.A, AcademicEvent.submission c.submission) ∈
-    publicTrace (embed .B log) at hm
-  rw [embed, public_restore] at hm
-  obtain ⟨e, _, he⟩ := List.mem_map.mp hm
-  have hv := congrArg Prod.fst he
-  change Venue.B = Venue.A at hv
-  cases hv
-
-theorem CCBB_has_B_provenance {h : History} (hb : CCBB h) :
-    CCFB h := by
-  obtain ⟨log, sessions, ⟨p, hp⟩, _, rfl⟩ := hb
-  exact ⟨p, (private_noninterference _ _ _ _).mpr hp⟩
-
-theorem CCBB_cannot_supply_A {h : History} (hb : CCBB h) :
-    ¬ CCFA h := by
-  obtain ⟨log, sessions, _, _, rfl⟩ := hb
+theorem private_only_no_A (sessions : List Episode) :
+    ¬ CCFA (privateSuffix sessions) := by
   rintro ⟨p, hp⟩
-  exact no_A_in_B_workflow log
-    ⟨p, (private_noninterference _ _ _ _).mp hp⟩
+  exact no_certificate_in_empty_public (public_private sessions) .A p hp
+
+theorem private_only_no_B (sessions : List Episode) :
+    ¬ CCFB (privateSuffix sessions) := by
+  rintro ⟨p, hp⟩
+  exact no_certificate_in_empty_public (public_private sessions) .B p hp
 
 /-! ## Quotient semantics and an observational universal property -/
 
@@ -328,44 +359,72 @@ theorem B_exists : CCFB (embed .B exampleLog) :=
   ⟨0, ⟨exampleCertificate .B⟩⟩
 
 def exampleEpisode : Episode :=
-  ⟨10, 2, {0, 1}⟩
+  ⟨10, 2, {0, 1}, {0, 1}⟩
 
-theorem valid_example_schedule : validSchedule exampleLog [exampleEpisode] := by
-  unfold validSchedule
-  refine ⟨by simp, ?_, by simp⟩
-  intro e he
-  have he' : e = exampleEpisode := by simpa using he
-  subst e
-  refine ⟨by decide, by decide, ?_⟩
-  intro a ha
-  simp [exampleLog] at ha
-  rcases ha with h | h | h | h <;> subst a <;> decide
+theorem exampleEpisode_valid : validEpisode exampleEpisode := by
+  decide
 
-theorem BB_exists : CCBB (embed .B exampleLog ++ privateSuffix [exampleEpisode]) :=
-  ⟨exampleLog, [exampleEpisode], B_exists, valid_example_schedule, rfl⟩
+theorem BB_exists : CCBB (privateSuffix [exampleEpisode]) := by
+  exact ⟨exampleEpisode, by simp, exampleEpisode_valid⟩
 
-/-- The same person can have an A publication and private episodes.
-The result is a non-substitution theorem, not an incompatibility theorem. -/
+theorem BB_after_public (log : PublicLog) :
+    CCBB (restorePublic log ++ privateSuffix [exampleEpisode]) := by
+  exact ⟨exampleEpisode, by simp, exampleEpisode_valid⟩
+
+theorem A_only : CCFA (embed .A exampleLog) ∧ ¬ CCBB (embed .A exampleLog) :=
+  ⟨A_exists, no_private_in_public _⟩
+
+theorem B_only : CCFB (embed .B exampleLog) ∧ ¬ CCBB (embed .B exampleLog) :=
+  ⟨B_exists, no_private_in_public _⟩
+
+theorem BB_only :
+    CCBB (privateSuffix [exampleEpisode]) ∧
+    ¬ CCFA (privateSuffix [exampleEpisode]) ∧
+    ¬ CCFB (privateSuffix [exampleEpisode]) :=
+  ⟨BB_exists, private_only_no_A _, private_only_no_B _⟩
+
+/-- The outcome predicates are not mutually exclusive. -/
 theorem coexistence :
-    CCFA (embed .A exampleLog ++ privateSuffix [exampleEpisode]) :=
-  ⟨0, (private_noninterference _ _ _ _).mpr ⟨exampleCertificate .A⟩⟩
+    CCFA (embed .A exampleLog ++ privateSuffix [exampleEpisode]) ∧
+      CCBB (embed .A exampleLog ++ privateSuffix [exampleEpisode]) :=
+  ⟨⟨0, (private_noninterference _ _ _ _).mpr ⟨exampleCertificate .A⟩⟩,
+    BB_after_public _⟩
 
-/-- Equality of the outcome predicates would contradict a concrete witness. -/
+theorem neither : ¬ CCFA [] ∧ ¬ CCBB [] := by
+  refine ⟨?_, ?_⟩
+  · rintro ⟨p, hp⟩
+    exact no_certificate_in_empty_public rfl .A p hp
+  · simp [CCBB, privateTrace]
+
 theorem CCFA_ne_CCBB : CCFA ≠ CCBB := by
   intro h
-  have hb : CCBB (embed .A exampleLog) := h ▸ A_exists
-  exact CCBB_cannot_supply_A hb A_exists
+  exact A_only.2 (h ▸ A_only.1)
 
-/-- The two outcome sets are nonempty and disjoint, despite private activity
-being observationally irrelevant to an already certified public outcome. -/
+theorem CCFB_ne_CCBB : CCFB ≠ CCBB := by
+  intro h
+  exact B_only.2 (h ▸ B_only.1)
+
+/-- The lexical derivation does not imply either semantic inclusion. -/
+theorem semantic_independence :
+    (¬ ∀ h, CCFB h → CCBB h) ∧ (¬ ∀ h, CCBB h → CCFB h) := by
+  constructor
+  · intro h
+    exact B_only.2 (h _ B_only.1)
+  · intro h
+    exact BB_only.2.2 (h _ BB_only.1)
+
 theorem life_model_obstruction :
-    CCFA ≠ CCBB ∧
-    (∃ h, CCFA h) ∧ (∃ h, CCBB h) ∧
-    (∀ h, CCBB h → CCFB h ∧ ¬ CCFA h) ∧
-    (∀ h sessions v p, Certified (h ++ privateSuffix sessions) v p ↔ Certified h v p) := by
-  exact ⟨CCFA_ne_CCBB, ⟨_, A_exists⟩, ⟨_, BB_exists⟩,
-    fun _ h => ⟨CCBB_has_B_provenance h, CCBB_cannot_supply_A h⟩,
-    private_noninterference⟩
+    CCFA ≠ CCBB ∧ CCFB ≠ CCBB ∧
+    (∃ h, CCFA h ∧ ¬ CCBB h) ∧
+    (∃ h, CCBB h ∧ ¬ CCFA h) ∧
+    (∃ h, CCFA h ∧ CCBB h) ∧
+    (∃ h, ¬ CCFA h ∧ ¬ CCBB h) ∧
+    (¬ ∀ h, CCFB h → CCBB h) ∧
+    (¬ ∀ h, CCBB h → CCFB h) := by
+  exact ⟨CCFA_ne_CCBB, CCFB_ne_CCBB,
+    ⟨_, A_only⟩, ⟨_, BB_only.1, BB_only.2.1⟩,
+    ⟨_, coexistence⟩, ⟨_, neither⟩,
+    semantic_independence.1, semantic_independence.2⟩
 
 #print axioms life_model_obstruction
 #print axioms universal_public_observer

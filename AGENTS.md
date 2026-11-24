@@ -1,9 +1,9 @@
 # trashlean contribution policy
 
-- Use Mathlib and mathematically substantive techniques.
-- Explicitly distinguish fictional modeling assumptions from real-world claims.
-- Prove auxiliary results and a headline theorem; avoid sorry, admit, and new axioms.
-- Keep a module in Trashlean/ for each theorem and register it in Trashlean.lean.
-- Maintain the theorem index in README.md.
-- Run lake build and inspect #print axioms for headline theorems.
-- Do not claim successful verification unless the Lean kernel actually checked the file.
+- Distinguish lexical transformations from semantic claims.
+- Use substantial Mathlib mathematics and explicit modeling assumptions.
+- Do not use sorry, admit, or custom axioms to force conclusions.
+- Maintain one mathematical exposition in docs/ per theorem, and an index link in README.md.
+- Keep README concise: usage, theorem index, and contribution instructions only.
+- Register modules in Trashlean.lean, run lake build, and inspect headline theorem axiom dependencies.
+- Report unverified builds honestly.

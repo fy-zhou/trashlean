@@ -7,7 +7,8 @@ The Zariski topology forgets multiplicity, but the tower of infinitesimal
 neighbourhoods remembers it. Repeated lexical degeneration converges to
 zero in every fixed finite jet, while CCFA survives even the residue map.
 
-All constructions below use the polynomial model of Part I.
+All constructions below concern the syntactic polynomial encoding of Part I,
+not the real-world meanings of the labels. No semantic inclusion is claimed.
 -/
 
 namespace Trashlean.Academic.Degeneration

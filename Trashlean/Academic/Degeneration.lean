@@ -7,8 +7,10 @@ An algebraic, categorical and topological obstruction to the equivalence of
 CCFA and CCBB.
 
 CCFA and CCFB are conference-category tokens; CCBB is the lexical parody
-derived from CCFB. The model is fictional. Its scalar credit counts A-origin
-tokens, not scientific merit or human worth.
+derived from CCFB. This is a free syntactic toy model ONLY: the symbols represent labels, not
+real activities. The relation ≤ is syntactic reachability, not academic
+classification, causal implication, or inclusion of sets of life histories.
+See Life.lean for the separate semantic model.
 
 The proof goes through the representation in ℝ[X], a conserved character,
 a thin category, the residue ring of a maximal ideal, and a closed linear
