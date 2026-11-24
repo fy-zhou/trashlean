@@ -8,7 +8,7 @@ Unnecessarily sophisticated Lean 4 proofs of absolutely unnecessary theorems.
 
 *An Algebraic, Categorical and Topological Obstruction to the Equivalence of CCFA and CCBB.*
 
-[Read the formalization](Trashlean/Academic/Degeneration.lean).
+[Part I: Categorical and algebraic obstructions](Trashlean/Academic/Degeneration.lean) · [Part II: Infinitesimal academic geometry](Trashlean/Academic/Infinitesimal.lean).
 
 CCBB is a lexical parody derived from CCFB. We formalize this
 relation through a squaring operation on polynomial representations.
@@ -25,6 +25,22 @@ preserve evaluation at zero on the syntactic artifact space.
 
 The model is satirical: its credit counts an invented A-origin token rather
 than real research quality. All interpretations beyond the formal model are left to the reader.
+
+### Part II — Infinitesimal academic geometry
+
+Write m for the kernel of evaluation at zero. The second part studies the
+actual tower of quotient rings R[X]/m^n rather than only the constant term.
+
+* The residue field is identified using the first isomorphism theorem.
+* The m-adic filtration is strict and separated; its finite jet maps jointly
+  separate polynomials and admit compatible quotient transition maps.
+* The Zariski closed loci of CCFB and CCBB coincide, but their second jets
+  differ. The former gives a nonzero nilpotent; the latter vanishes.
+* Iterated degeneration has exact vanishing order 2^n. Every fixed finite
+  jet eventually sees zero, whereas CCFA survives every positive-order jet.
+
+The Zariski topology forgets multiplicity. The infinitesimal neighbourhood
+does not.
 
 ## Build
 
