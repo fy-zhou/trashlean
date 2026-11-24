@@ -26,7 +26,7 @@ lake env lean Trashlean/Academic/Life.lean
 
 | ID | Theorem | Proof notes | Lean |
 |---|---|---|---|
-| TRASH-0001 | CCFA ≠ CCBB — The Fundamental Theorem of Academic Non-Substitution | [Mathematical exposition](docs/TRASH-0001.md) | [Life](Trashlean/Academic/Life.lean), [Statistics](Trashlean/Academic/Statistics.lean), [Schedules](Trashlean/Academic/Schedules.lean), [Joint laws](Trashlean/Academic/Joint.lean), [Linear splitting](Trashlean/Academic/Observables.lean), [Lexical algebra](Trashlean/Academic/Degeneration.lean), [Infinitesimal geometry](Trashlean/Academic/Infinitesimal.lean) |
+| TRASH-0001 | CCFA ≠ CCBB — The Fundamental Theorem of Academic Non-Substitution | [Mathematical exposition](docs/TRASH-0001.md) | [Life](Trashlean/Academic/Life.lean), [Statistics](Trashlean/Academic/Statistics.lean), [Schedules](Trashlean/Academic/Schedules.lean), [Joint laws](Trashlean/Academic/Joint.lean), [Linear splitting](Trashlean/Academic/Observables.lean), [Allocation](Trashlean/Academic/Allocation.lean), [Lexical algebra](Trashlean/Academic/Degeneration.lean), [Infinitesimal geometry](Trashlean/Academic/Infinitesimal.lean) |
 
 ## Contributing
 

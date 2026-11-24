@@ -126,17 +126,20 @@ theorem residual_zero_iff_observable (f : FullObservable) :
     rw [restrict_pullback, sub_self]
 
 /-- The private-event indicator is genuinely nonzero in the hidden kernel. -/
-def privateIndicator : FullObservable :=
-  fun h => if CCBB h then 1 else 0
+def privateIndicator : FullObservable := by
+  classical
+  exact fun h => if CCBB h then 1 else 0
 
 theorem privateIndicator_kernel :
     privateIndicator ∈ LinearMap.ker restrictObservable := by
+  classical
   apply LinearMap.mem_ker.mpr
   funext l
   change (if CCBB (restorePublic l) then (1 : ℝ) else 0) = 0
   simp [no_private_in_public]
 
 theorem privateIndicator_nonzero : privateIndicator ≠ 0 := by
+  classical
   intro h
   have he := congrFun h (privateSuffix [exampleEpisode])
   change (if CCBB (privateSuffix [exampleEpisode]) then (1 : ℝ) else 0) = 0 at he

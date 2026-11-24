@@ -5,3 +5,4 @@ import Trashlean.Academic.Statistics
 import Trashlean.Academic.Schedules
 import Trashlean.Academic.Joint
 import Trashlean.Academic.Observables
+import Trashlean.Academic.Allocation

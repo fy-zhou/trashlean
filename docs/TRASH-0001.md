@@ -221,3 +221,62 @@ belongs to ker R and is nonzero, providing a genuine hidden direction.
 The unit-slot schedules are constructive witnesses, not a claim that real
 life is discrete or that real correlations vanish. The public-only model
 allows arbitrary correlations when the full joint law is chosen.
+
+
+## 14. Constrained resource allocation: Hall's theorem and the assignment polytope
+
+The earlier suffix construction is one explicit family of feasible schedules.
+A more general model uses commitments with participant sets, release times,
+deadlines, and types (research, review, or private activity). The environment
+specifies a finite horizon and availability of each participant. A global
+single-slot resource prevents simultaneous commitments in this model.
+
+For each commitment i, let A_i be the slots within its release/deadline window
+available to every participant. A schedule is an injective map f with f(i)∈A_i.
+
+**Theorem 10 (global feasibility).** A schedule exists if and only if every
+finite coalition S of commitments satisfies
+
+$$
+|S|\leq\left|\bigcup_{i\in S}A_i\right|.
+$$
+
+This is Hall's marriage theorem applied to the scheduling graph. Its negation
+gives an exact bottleneck certificate. Aggregate time budget is necessary but
+not sufficient: two individually feasible commitments can both require the
+same single available slot. Increasing participant availability or extending
+the horizon cannot destroy a feasible schedule.
+
+In the balanced assignment problem, let M be a doubly stochastic matrix,
+where M_ij represents fractional allocation of commitment i to slot j. For
+an arbitrary real cost matrix C define the linear cost
+
+$$
+\mathcal{C}(M)=\sum_{i,j}C_{ij}M_{ij}.
+$$
+
+**Theorem 11 (zero integrality gap).** There is a permutation matrix
+globally minimizing this cost over all doubly stochastic matrices.
+
+**Proof.** The Birkhoff–von Neumann theorem represents each feasible M
+as a convex combination of permutation matrices. By linearity, its cost
+is a weighted average of deterministic costs and cannot be smaller
+than their minimum. A minimizing permutation exists by finiteness.
+The extreme points of the polytope are exactly the permutation matrices. ∎
+
+**Theorem 12 (support-preserving decomposition).** Suppose some edges
+are forbidden and M has zero on them. In any Birkhoff decomposition
+with nonnegative weights, every positive-weight permutation must also
+vanish on every forbidden edge.
+
+**Proof.** At a forbidden edge the sum of nonnegative terms is zero.
+If a positive-weight permutation assigned positive mass there, the sum
+would be positive, a contradiction. ∎
+
+This resource-allocation theory does not identify private activities with
+academic commitments. They compete for resources only when the environment
+imposes a shared constraint.
+
+[Lean: Allocation.lean](../Trashlean/Academic/Allocation.lean) — hall_feasibility,
+infeasible_iff_bottleneck, integral_global_optimum, fractional_extreme_points,
+feasible_support_decomposition.
