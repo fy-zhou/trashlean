@@ -227,7 +227,7 @@ theorem mixed_privateMarginal (ν : Measure PublicLog) (q : PublicLog → ℝ≥
   intro s hs
   rw [privateMarginal, Measure.map_apply public_measurable hs,
     Measure.restrict_apply (public_measurable hs), mixedLaw,
-    Measure.add_apply MeasurableSpace.measurableSet_top,
+    Measure.add_apply (s := publicTrace ⁻¹' s ∩ privateEventSet) MeasurableSpace.measurableSet_top,
     lawAbsent, lawPresent,
     Measure.map_apply absent_measurable MeasurableSpace.measurableSet_top,
     Measure.map_apply present_measurable MeasurableSpace.measurableSet_top]
@@ -250,6 +250,7 @@ theorem arbitrary_posterior_realization (ν : Measure PublicLog)
   have hp : IsProbabilityMeasure (mixedLaw ν q) := by
     constructor
     have hu := congrArg (fun m : Measure PublicLog => m Set.univ) hm
+    change ((mixedLaw ν q).map publicTrace) Set.univ = ν Set.univ at hu
     rw [Measure.map_apply public_measurable MeasurableSet.univ,
       preimage_univ, measure_univ] at hu
     exact hu
