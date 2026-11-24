@@ -44,6 +44,24 @@ actual tower of quotient rings R[X]/m^n rather than only the constant term.
 The Zariski topology forgets multiplicity. The infinitesimal neighbourhood
 does not.
 
+### Part III — An event-sourced model of academic life
+
+[Read the causal and observational model](Trashlean/Academic/Life.lean).
+
+The public outcome is reconstructed from an event log rather than assigned
+a numerical label. A publication certificate requires a versioned submission,
+experimental evidence, time allocations, independent referees, temporally
+ordered reports, a quorum, an aggregate score threshold and an accepted
+editorial decision. A private schedule carries its own time intervals and
+participants. The B-origin derivation extends a certified B workflow with
+a feasible private schedule.
+
+The model establishes an observational quotient and its universal
+factorization property, noninterference for every public observer,
+finite-resource bounds, and concrete nonvacuity witnesses. A private episode
+cannot supply a missing public certificate, but can coexist with an A outcome.
+All thresholds are fictional modeling choices, not actual conference rules.
+
 ## Build
 
 Install elan, then:
