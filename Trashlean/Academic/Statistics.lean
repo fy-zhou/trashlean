@@ -227,7 +227,7 @@ theorem mixed_privateMarginal (ν : Measure PublicLog) (q : PublicLog → ℝ≥
   intro s hs
   rw [privateMarginal, Measure.map_apply public_measurable hs,
     Measure.restrict_apply (public_measurable hs), mixedLaw,
-    Measure.add_apply (s := publicTrace ⁻¹' s ∩ privateEventSet) MeasurableSpace.measurableSet_top,
+    Measure.add_apply _ _ _,
     lawAbsent, lawPresent,
     Measure.map_apply absent_measurable MeasurableSpace.measurableSet_top,
     Measure.map_apply present_measurable MeasurableSpace.measurableSet_top]
