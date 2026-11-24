@@ -28,8 +28,7 @@ theorem vanishingIdeal_eq_span_X :
   ext p
   change p ∈ RingHom.ker evaluation ↔ p ∈ Ideal.span ({X} : Set AcademicRing)
   rw [RingHom.mem_ker, Ideal.mem_span_singleton, Polynomial.X_dvd_iff,
-    Polynomial.coeff_zero_eq_eval_zero]
-  rfl
+    Polynomial.coeff_zero_eq_eval_zero] <;> rfl
 
 /-- The order-n infinitesimal neighbourhood of the origin is cut out by m^n. -/
 def jetIdeal (n : ℕ) : Ideal AcademicRing := vanishingIdeal ^ n
@@ -124,8 +123,7 @@ theorem B_BB_same_zariski_locus :
       PrimeSpectrum.zeroLocus ({model CCBB} : Set AcademicRing) := by
   calc
     _ = PrimeSpectrum.zeroLocus (vanishingIdeal : Set AcademicRing) := by
-      rw [vanishingIdeal_eq_span_X, PrimeSpectrum.zeroLocus_span]
-      rfl
+      rw [vanishingIdeal_eq_span_X, PrimeSpectrum.zeroLocus_span] <;> rfl
     _ = PrimeSpectrum.zeroLocus (jetIdeal 2 : Set AcademicRing) :=
       (zariski_forgets_thickness 2 (by decide)).symm
     _ = _ := by
@@ -207,6 +205,72 @@ theorem no_jet_recovery (k n : ℕ) (hk : 0 < k) (hkn : k ≤ n) :
     jetMap k (model CCFA) ≠ jetMap k (model (iteratedDegeneration n)) := by
   rw [finite_jet_eventual_extinction k n hkn]
   exact A_survives_all_jets k hk
+
+/-! ## The compatible jet space is strictly larger than the polynomial ring -/
+
+/-- The finite truncations of the formal geometric series 1 + X + X² + ... -/
+def geometricTruncation : ℕ → AcademicRing
+  | 0 => 0
+  | n + 1 => geometricTruncation n + X ^ n
+
+theorem coeff_geometricTruncation (n d : ℕ) :
+    (geometricTruncation n).coeff d = if d < n then 1 else 0 := by
+  induction n with
+  | zero => simp [geometricTruncation]
+  | succ n ih =>
+      rw [geometricTruncation, Polynomial.coeff_add, ih, Polynomial.coeff_X_pow]
+      by_cases hd : d < n
+      · have hd' : d < n + 1 := by omega
+        simp [hd, ne_of_lt hd, hd']
+      · by_cases he : d = n
+        · subst d
+          simp
+        · have hn : ¬ d < n + 1 := by omega
+          simp [hd, he, hn]
+
+/-- The compatible family in the inverse system of finite jet rings. -/
+def geometricJetFamily (n : ℕ) : Jet n :=
+  jetMap n (geometricTruncation n)
+
+theorem geometric_family_compatible {m n : ℕ} (h : m ≤ n) :
+    transition h (geometricJetFamily n) = geometricJetFamily m := by
+  unfold geometricJetFamily
+  rw [transition_jetMap]
+  apply sub_eq_zero.mp
+  rw [← map_sub]
+  apply Ideal.Quotient.eq_zero_iff_mem.mpr
+  apply (jet_membership m _).mpr
+  intro d hd
+  rw [Polynomial.coeff_sub, coeff_geometricTruncation, coeff_geometricTruncation]
+  simp [hd, lt_of_lt_of_le hd h]
+
+/-- No polynomial can realize the formal geometric series in all jets:
+the coefficient beyond its degree would simultaneously be zero and one. -/
+theorem geometric_family_not_polynomial :
+    ¬ ∃ p : AcademicRing, ∀ n, jetMap n p = geometricJetFamily n := by
+  rintro ⟨p, hp⟩
+  let d := p.natDegree + 1
+  have hd : p.natDegree < d := Nat.lt_succ_self _
+  have hz : jetMap (d + 1) (p - geometricTruncation (d + 1)) = 0 := by
+    rw [map_sub, hp (d + 1)]
+    simp [geometricJetFamily]
+  have hm : p - geometricTruncation (d + 1) ∈ jetIdeal (d + 1) :=
+    Ideal.Quotient.eq_zero_iff_mem.mp hz
+  have hc := (jet_membership (d + 1) _).mp hm d (Nat.lt_succ_self d)
+  rw [Polynomial.coeff_sub, Polynomial.coeff_eq_zero_of_natDegree_lt hd,
+    coeff_geometricTruncation] at hc
+  simp at hc
+
+/-- The canonical map into the compatible jet space is not surjective,
+even though the preceding separation theorem proves its injectivity. -/
+theorem completion_is_strict :
+    ∃ f : (n : ℕ) → Jet n,
+      (∀ m n (h : m ≤ n), transition h (f n) = f m) ∧
+      ¬ ∃ p : AcademicRing, ∀ n, jetMap n p = f n := by
+  exact ⟨geometricJetFamily, fun _ _ h => geometric_family_compatible h,
+    geometric_family_not_polynomial⟩
+
+#print axioms completion_is_strict
 
 theorem infinitesimal_obstruction :
     CCFA ≠ CCBB ∧

@@ -34,6 +34,8 @@ actual tower of quotient rings R[X]/m^n rather than only the constant term.
 * The residue field is identified using the first isomorphism theorem.
 * The m-adic filtration is strict and separated; its finite jet maps jointly
   separate polynomials and admit compatible quotient transition maps.
+* A compatible family of geometric-series truncations is proved not to come
+  from any polynomial: the formal completion is strictly larger.
 * The Zariski closed loci of CCFB and CCBB coincide, but their second jets
   differ. The former gives a nonzero nilpotent; the latter vanishes.
 * Iterated degeneration has exact vanishing order 2^n. Every fixed finite
