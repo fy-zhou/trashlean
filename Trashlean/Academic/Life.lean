@@ -209,10 +209,7 @@ theorem no_certificate_in_empty_public {h : History}
     (he : publicTrace h = []) (v : Venue) (p : ℕ) :
     ¬ Certified h v p := by
   rintro ⟨c⟩
-  have hm := c.submitted
-  change (v, AcademicEvent.submission c.submission) ∈ publicTrace h at hm
-  rw [he] at hm
-  simp at hm
+  exact (List.ne_nil_of_mem c.submitted) he
 
 theorem certification_observational {h k : History}
     (eq : publicTrace h = publicTrace k) (v : Venue) (p : ℕ) :
@@ -362,6 +359,7 @@ def exampleEpisode : Episode :=
   ⟨10, 2, {0, 1}, {0, 1}⟩
 
 theorem exampleEpisode_valid : validEpisode exampleEpisode := by
+  unfold validEpisode
   decide
 
 theorem BB_exists : CCBB (privateSuffix [exampleEpisode]) := by
