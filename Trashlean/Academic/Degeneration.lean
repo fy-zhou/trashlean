@@ -180,7 +180,7 @@ theorem A_residue_ne_zero : residue CCFA ≠ 0 := by
   intro h
   have hm : model CCFA ∈ RingHom.ker evaluation :=
     Ideal.Quotient.eq_zero_iff_mem.mp h
-  have he := (RingHom.mem_ker evaluation).mp hm
+  have he := RingHom.mem_ker.mp hm
   change credit CCFA = 0 at he
   exact one_ne_zero (credit_A.symm.trans he)
 

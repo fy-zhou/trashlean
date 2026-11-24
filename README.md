@@ -10,7 +10,7 @@ Unnecessarily sophisticated Lean 4 proofs of absolutely unnecessary theorems.
 
 [Read the formalization](Trashlean/Academic/Degeneration.lean).
 
-CCBB (操操逼逼) is a lexical parody derived from CCFB. We formalize this
+CCBB is a lexical parody derived from CCFB. We formalize this
 relation through a squaring operation on polynomial representations.
 Revisions add an arbitrary multiple of the indeterminate X. Both operations
 preserve evaluation at zero on the syntactic artifact space.
@@ -24,8 +24,7 @@ preserve evaluation at zero on the syntactic artifact space.
 | Topology | Product topology, closed hyperplane, closure | Even pointwise approximation cannot overcome the obstruction |
 
 The model is satirical: its credit counts an invented A-origin token rather
-than real research quality. Nothing here implies actual incompatibility
-between academic work and personal life.
+than real research quality. All interpretations beyond the formal model are left to the reader.
 
 ## Build
 
